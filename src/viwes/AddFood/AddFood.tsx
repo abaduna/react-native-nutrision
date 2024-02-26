@@ -6,6 +6,7 @@ import AddFoodModal from '../../componets/AddFoodModal/AddFoodModal'
 import useFoodStorage from '../../Hooks/useFoodStorage'
 import { Meal } from '../../types'
 import MealItens from '../../componets/MealItems/MealItens'
+import { useFocusEffect } from '@react-navigation/native'
 
 type Props = {}
 
@@ -35,21 +36,22 @@ try {
   console.error(error);
   
 }
-useEffect(()=>{
-  loadFoods().catch(null)
-},[])
+useFocusEffect(()=>{
+  loadFoods()
+})
   }
   const handlerSerchPress =async()=>{
     try {
       const resolt  = await onGetFood()
       setFoods(resolt.fiter((item:Meal)=> item.name.toLocaleLowerCase().includes(serch.toLocaleLowerCase())))
       
+      
     } catch (error) {
       setFoods([])
     }
   }
   return (
-    <View style={style.container}>
+    <ScrollView style={style.container}>
       <Header/>
       <View style={style.containerAddCalories}>
           <View style={style.leftContainer}>
@@ -77,12 +79,13 @@ useEffect(()=>{
           </View>
       </View>
       <AddFoodModal visible={visible} onClose={onClose}/>
+      <Button title="actualizar" onPress={loadFoods}/>
       <ScrollView style={style.content}>
       {foods?.map((food,index)=>(
-        <MealItens key={index} {...food}></MealItens>
+        <MealItens key={index} {...food} isAbleToAdd></MealItens>
       ))}
       </ScrollView>
-    </View>
+    </ScrollView>
   )
 }
 const style = StyleSheet.create({
